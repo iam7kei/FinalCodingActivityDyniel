@@ -1,0 +1,9 @@
+{
+    "name": "kei/final",
+    "autoload": {
+        "psr-4": {
+            "app\\": "./"
+        }
+    },
+    "require": {}
+}
