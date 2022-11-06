@@ -40,15 +40,15 @@ class Router
             return $this->renderView("_404");
         }
 
-        if(is_string($callback)) {
+        if (is_string($callback)) {
             return $this->renderView($callback);
         }
-        if(is_array($callback)) {
+        if (is_array($callback)) {
             Application::$app->controller = new $callback[0]();
             $callback[0] = Application::$app->controller;
-
         }
-        return call_user_func($callback, $this->request);
+
+        return call_user_func($callback, $this->request, $this->response);
     }
 
     public function renderView($view, $params = [])
@@ -62,7 +62,7 @@ class Router
     {
         $layout = Application::$app->controller->layout;
         ob_start();
-        include_once Application::$ROOT_DIR."/views/layout/$layout.php";
+        include_once Application::$ROOT_DIR . "/views/layout/$layout.php";
         return ob_get_clean();
     }
 
@@ -72,7 +72,7 @@ class Router
             $$key = $value;
         }
         ob_start();
-        include_once Application::$ROOT_DIR."/views/$view.php";
+        include_once Application::$ROOT_DIR . "/views/$view.php";
         return ob_get_clean();
     }
 }

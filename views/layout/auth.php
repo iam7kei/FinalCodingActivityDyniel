@@ -1,3 +1,8 @@
+<?php
+
+use app\core\Application;
+
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -27,6 +32,13 @@
     </div>
 </nav>
 <div class="container">
+    <?php
+    $message = Application::$app->session->getFlashMessage('success');
+    if (Application::$app->session->getFlashMessage('success')) {
+        $alert = new \app\core\form\Alert(['success', $message]);
+        echo $alert;
+    }
+    ?>
     {{content}}
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
