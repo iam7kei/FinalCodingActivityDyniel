@@ -12,7 +12,7 @@ class PalindromeController extends Controller
 
     public function palindrome(Request $request)
     {
-        $this->setLayout('admin_main');
+        $this->setLayout('main');
         $palindromeModel = new PalindromeModel();
 
         if ($request->isPost()) {

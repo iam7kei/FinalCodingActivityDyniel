@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\core\Application;
 use app\core\Request;
 use app\core\Response;
+use app\models\CustomerLoginModel;
 use app\models\CustomerModel;
 use app\models\LoginModel;
 
@@ -16,16 +17,20 @@ class AuthController extends Controller
             $response->redirect('/');
             return;
         }
-        $loginModel = new LoginModel();
+        $customerLoginModel = new CustomerLoginModel();
         if ($request->isPost()) {
-            $loginModel->loadData($request->getBody());
-            if ($loginModel->validate() && $loginModel->login()) {
+            $customerLoginModel->loadData($request->getBody());
+
+            if (
+                $customerLoginModel->validate() &&
+                $customerLoginModel->login(CustomerModel::class, 'email')
+            ) {
                 $response->redirect('/');
                 return;
             }
         }
         return $this->render('login', [
-            'model' => $loginModel
+            'model' => $customerLoginModel
         ]);
     }
     public function register(Request $request, Response $response)
@@ -62,7 +67,7 @@ class AuthController extends Controller
 
     public function logout(Request $request, Response $response)
     {
-        Application::$app->logout();
+        Application::$app->logout(CustomerModel::getPrimaryKey());
         $response->redirect('/');
     }
 }

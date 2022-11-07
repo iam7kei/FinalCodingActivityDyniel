@@ -27,6 +27,11 @@ class Request
         return $this->method() === 'post';
     }
 
+    public function isAdmin()
+    {
+        return strpos($this->getPath(), '/admin');
+    }
+
     public function getBody()
     {
         $body = [];

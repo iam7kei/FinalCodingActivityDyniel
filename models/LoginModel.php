@@ -4,24 +4,22 @@ namespace app\models;
 
 use app\core\Application;
 use app\core\Model;
+use app\core\UserModel;
 
 class LoginModel extends Model
 {
-    public string $email = '';
     public string $password = '';
+
     public function rules(): array
     {
-        return [
-            'email' => [self::RULE_REQUIRED,self::RULE_EMAIL],
-            'password' => [self::RULE_REQUIRED]
-        ];
+        return [];
     }
 
-    public function login()
+    public function login(string $className, string $type)
     {
-        $user = CustomerModel::findUser(['email' => $this->email]);
+        $user = $className::findUser([$type => $this->{$type}]);
         if (!$user) {
-            $this->addError('email', 'This user does not exist');
+            $this->addError($type, 'This user does not exist');
             return false;
         }
         if (!password_verify($this->password, $user->password)) {

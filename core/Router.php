@@ -10,6 +10,7 @@ class Router
     public Request $request;
     protected array $routes = [];
     public Response $response;
+
     /**
      * @param Request $request
      */

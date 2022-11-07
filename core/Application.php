@@ -3,13 +3,17 @@
 namespace app\core;
 
 use app\controllers\Controller;
+use app\controllers\SiteController;
+use app\models\AdminModel;
 use app\models\CustomerModel;
+use Cassandra\Custom;
 
 class Application
 {
     public static string $ROOT_DIR;
     public string $userClass;
     public bool $isGuest = true;
+    public array $currentUser = [];
 
     public Database $db;
     public Router $router;
@@ -25,13 +29,18 @@ class Application
     {
         self::$ROOT_DIR = $rootPath;
         self::$app = $this;
+        $this->session = new Session();
+        $this->controller = new SiteController();
         $this->request = new Request();
         $this->response = new Response();
-        $this->session = new Session();
-        $this->router = new Router($this->request, $this->response);
         $this->db = new Database($config['db']);
-        $this->userClass = $config['userClass'];
-        $userID = $this->session->get('user');
+
+        $currentUserClass = CustomerModel::tableName();
+        if ($this->request->isAdmin() === 0) {
+            $currentUserClass = AdminModel::tableName();
+        }
+        $this->userClass = $config['userClass'][$currentUserClass];
+        $userID = $this->session->get($this->userClass::getPrimaryKey());
 
         if ($userID) {
             $primaryKey = $this->userClass::getPrimaryKey();
@@ -39,6 +48,8 @@ class Application
         } else {
             $this->user = null;
         }
+
+        $this->router = new Router($this->request, $this->response);
     }
 
     public function run()
@@ -67,15 +78,15 @@ class Application
         $this->user = $user;
         $primaryKey = $user->getPrimaryKey();
         $userID = $user->{$primaryKey};
-        $this->session->set('user', $userID);
+        $this->session->set($primaryKey, $userID);
         $this->isGuest = false;
         return true;
     }
 
-    public function logout()
+    public function logout(string $currentUser)
     {
         $this->user = null;
-        $this->session->remove('user');
+        $this->session->remove($currentUser);
     }
 
     public static function isGuest()
