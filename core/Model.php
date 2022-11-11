@@ -2,7 +2,9 @@
 
 namespace app\core;
 
-abstract class Model
+use app\models\ValidationModel;
+
+abstract class Model extends ValidationModel
 {
     public const RULE_REQUIRED = 'required';
     public const RULE_EMAIL = 'email';
@@ -12,6 +14,9 @@ abstract class Model
     public const RULE_PALINDROME = 'palindrome';
     public const RULE_UNIQUE = 'unique';
     public const RULE_EXISTS = 'exists';
+    public const RULE_UPDATE = 'update';
+    public const RULE_PRICE = 'price';
+    public const RULE_ONCE = 'once';
 
     abstract public function rules(): array;
     public array $errors = [];
@@ -24,43 +29,60 @@ abstract class Model
             }
         }
     }
-    public function validate()
+    public function validate(string $ruleType)
     {
-        foreach ($this->rules() as $attribute => $rules) {
+        foreach ($this->{$ruleType}() as $attribute => $rules) {
             $value = $this->{$attribute};
             foreach ($rules as $rule) {
                 $ruleName = $rule;
+
                 if (!is_string($ruleName)) {
                     $ruleName = $rule[0];
                 }
+
                 if ($ruleName === self::RULE_REQUIRED && !$value) {
                     $this->addRuleError($attribute, self::RULE_REQUIRED);
                 }
                 if ($ruleName === self::RULE_EMAIL && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
                     $this->addRuleError($attribute, self::RULE_EMAIL);
                 }
-                if ($ruleName === self::RULE_MIN && strlen($value) < $rule['min']) {
+
+                if ($ruleName === self::RULE_MIN && $this->validateMin($value, $rule['min'])) {
                     $this->addRuleError($attribute, self::RULE_MIN, $rule);
                 }
-                if ($ruleName === self::RULE_MAX && strlen($value) > $rule['max']) {
+
+                if ($ruleName === self::RULE_MAX && $this->validateMax($value, $rule['max'])) {
                     $this->addRuleError($attribute, self::RULE_MAX, $rule);
                 }
-                if ($ruleName === self::RULE_MATCH && $value !== $this->{$rule['match']}) {
+
+                if ($ruleName === self::RULE_MATCH && $this->validateMatch($value, $this->{$rule['match']})) {
                     $this->addRuleError($attribute, self::RULE_MATCH, $rule);
                 }
+
                 if ($ruleName === self::RULE_PALINDROME && !$this->isPalindrome()) {
                     $this->addRuleError($attribute, self::RULE_PALINDROME);
                 }
-                if ($ruleName === self::RULE_UNIQUE) {
-                    $className = $rule['class'];
-                    $uniqueAttr = $attribute = $rule['attribute'] ?? $attribute;
-                    $tableName = $className::tableName();
-                    $statement = Application::$app->db->prepare("SELECT * FROM $tableName WHERE $uniqueAttr = :attr");
-                    $statement->bindValue(":attr", $value);
-                    $statement->execute();
-                    $result = $statement->fetchObject();
-                    if ($result) {
-                        $this->addRuleError($attribute, self::RULE_UNIQUE, ['field' => $attribute]);
+                if ($ruleName === self::RULE_UNIQUE && $this->validateUnique($rule, $attribute, $value)) {
+                    $this->addRuleError($attribute, self::RULE_UNIQUE, ['field' => $attribute]);
+                }
+
+                if ($ruleName === self::RULE_UPDATE) {
+                    if (!$this->validateNewData($attribute, $value)) {
+                        if (isset($rule['class'])) {
+                            if ($this->validateUnique($rule, $attribute, $value)) {
+                                $this->addRuleError($attribute, self::RULE_UNIQUE, ['field' => $attribute]);
+                            }
+                        }
+                    }
+                }
+                if ($ruleName === self::RULE_PRICE && !filter_var($value, FILTER_VALIDATE_FLOAT)) {
+                    $this->addRuleError($attribute, self::RULE_PRICE);
+                }
+
+                if ($ruleName === self::RULE_ONCE) {
+                    $model = new $rule['class']();
+                    if ($model->findRecord($rule['where'])) {
+                        $this->addRuleError($attribute, self::RULE_ONCE, ['table' => $model::tableName()]);
                     }
                 }
             }
@@ -92,7 +114,9 @@ abstract class Model
             self::RULE_MATCH => 'This field must match with {match}',
             self::RULE_PALINDROME => 'Not a palindrome',
             self::RULE_UNIQUE => 'This {field} already exists',
-            self::RULE_EXISTS => 'This {field} does not exists'
+            self::RULE_EXISTS => 'This {field} does not exists',
+            self::RULE_PRICE => 'Please enter a valid price',
+            self::RULE_ONCE => 'This is already in {table}'
         ];
     }
 

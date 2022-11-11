@@ -17,7 +17,7 @@ class LoginModel extends Model
 
     public function login(string $className, string $type)
     {
-        $user = $className::findUser([$type => $this->{$type}]);
+        $user = $className::findRecord([$type => $this->{$type}]);
         if (!$user) {
             $this->addError($type, 'This user does not exist');
             return false;

@@ -29,7 +29,16 @@ class Request
 
     public function isAdmin()
     {
-        return strpos($this->getPath(), '/admin');
+        if (strpos($this->getPath(), '/admin') === 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public function getLastSlug()
+    {
+        $position = strrpos(self::getPath(), '/') + 1;
+        return substr(self::getPath(), $position);
     }
 
     public function getBody()

@@ -22,7 +22,7 @@ class AuthController extends Controller
             $customerLoginModel->loadData($request->getBody());
 
             if (
-                $customerLoginModel->validate() &&
+                $customerLoginModel->validate('loginRules') &&
                 $customerLoginModel->login(CustomerModel::class, 'email')
             ) {
                 $response->redirect('/');
@@ -35,7 +35,7 @@ class AuthController extends Controller
     }
     public function register(Request $request, Response $response)
     {
-        if (!Application::isGuest()) {
+        if (!Application::isGuest() && $request->isAdmin()) {
             $response->redirect('/');
             return;
         }
@@ -44,9 +44,13 @@ class AuthController extends Controller
         if ($request->isPost()) {
             $customerModel->loadData($request->getBody());
 
-            if ($customerModel->validate() && $customerModel->save()) {
+            if ($customerModel->validate('registerRules') && $customerModel->save()) {
+                $url = '/';
                 Application::$app->session->setFlashMessage('success', 'Successfully registered account.');
-                Application::$app->response->redirect('/');
+                if ($request->isAdmin()) {
+                    $url = '/admin/customers';
+                }
+                Application::$app->response->redirect($url);
             }
 
             return $this->render(

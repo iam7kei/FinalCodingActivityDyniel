@@ -24,13 +24,13 @@
                     <a class="nav-link active" aria-current="page" href="/">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/products">Products</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="/palindrome">Palindrome</a>
                 </li>
                 <?php if (!Application::isGuest()) {
                     ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="/products">Products</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/wishlist">Wishlist</a>
                 </li>
@@ -68,9 +68,16 @@
 </nav>
 <div class="container">
     <?php
+
     $message = Application::$app->session->getFlashMessage('success');
     if (Application::$app->session->getFlashMessage('success')) {
         $alert = new \app\core\form\Alert(['success', $message]);
+        echo $alert;
+    }
+
+    $errorMessage = Application::$app->session->getFlashMessage('error');
+    if (Application::$app->session->getFlashMessage('error')) {
+        $alert = new \app\core\form\Alert(['danger', $errorMessage]);
         echo $alert;
     }
     ?>

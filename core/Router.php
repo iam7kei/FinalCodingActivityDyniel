@@ -38,6 +38,9 @@ class Router
 
         if ($callback === false) {
             Application::$app->response->setStatusCode(404);
+            if ($this->request->isAdmin()) {
+                Application::$app->controller->layout = 'admin_main';
+            }
             return $this->renderView("_404");
         }
 

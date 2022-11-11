@@ -33,10 +33,10 @@ class Application
         $this->controller = new SiteController();
         $this->request = new Request();
         $this->response = new Response();
-        $this->db = new Database($config['db']);
-
+        $this->db = Database::getInstance();
         $currentUserClass = CustomerModel::tableName();
-        if ($this->request->isAdmin() === 0) {
+
+        if ($this->request->isAdmin()) {
             $currentUserClass = AdminModel::tableName();
         }
         $this->userClass = $config['userClass'][$currentUserClass];
@@ -44,7 +44,7 @@ class Application
 
         if ($userID) {
             $primaryKey = $this->userClass::getPrimaryKey();
-            $this->user = $this->userClass::findUser([$primaryKey => $userID]);
+            $this->user = $this->userClass::findRecord([$primaryKey => $userID]);
         } else {
             $this->user = null;
         }

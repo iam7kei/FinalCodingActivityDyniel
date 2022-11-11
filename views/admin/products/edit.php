@@ -8,3 +8,10 @@
         <button type="submit" class="btn btn-primary">Submit</button>
     </div>
 <?php  \app\core\form\Form::end();?>
+<?php  $form = \app\core\form\Form::begin(
+    '/admin/products/delete/' . \app\core\Application::$app->request->getLastSlug(),
+    'post'
+);
+?>
+    <button class="btn btn-danger">Delete</button>
+<?php  \app\core\form\Form::end();?>

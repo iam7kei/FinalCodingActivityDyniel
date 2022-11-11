@@ -12,4 +12,11 @@ class CustomerLoginModel extends LoginModel
             'password' => [self::RULE_REQUIRED]
         ];
     }
+    public function loginRules(): array
+    {
+        return [
+            'email' => [self::RULE_REQUIRED,self::RULE_EMAIL],
+            'password' => [self::RULE_REQUIRED]
+        ];
+    }
 }

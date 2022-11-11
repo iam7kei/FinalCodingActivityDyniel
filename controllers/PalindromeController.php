@@ -18,7 +18,7 @@ class PalindromeController extends Controller
         if ($request->isPost()) {
             $palindromeModel->loadData($request->getBody());
 
-            if ($palindromeModel->validate() && $palindromeModel->isPalindrome()) {
+            if ($palindromeModel->validate('palindromeRules') && $palindromeModel->isPalindrome()) {
                 $this->isPalindrome = true;
             }
             $status = $palindromeModel->statusMessages();

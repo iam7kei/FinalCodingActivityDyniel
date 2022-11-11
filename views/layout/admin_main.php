@@ -23,46 +23,46 @@ use app\core\Application;
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="/admin">Home</a>
                 </li>
+                <?php if (!Application::isGuest()) {?>
                 <li class="nav-item">
                     <a class="nav-link" href="/admin/products">Products</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/admin/customers">Customers</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/users">Users</a>
+                </li>
             </ul>
-            <?php if (Application::isGuest()) {
-                ?>
-                <ul class="navbar-nav" >
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/login">Login</a>
-                    </li>
-                </ul>
-                <?php
-            } else {
-                ?>
                 <span class="navbar-text">
-                            Welcome, <?php echo Application::$app->user->getName(); ?>!
-                        </span>
+                    Welcome, <?php echo Application::$app->user->getName(); ?>!
+                </span>
                 <nav class="navbar bg-light">
                     <form class="container-fluid justify-content-start">
                         <a href="/admin/logout">
                             <button class="btn btn-sm btn-outline-danger" type="button">Logout</button>
                         </a>
                     </form>
+                <?php } else { ?>
+                    <ul class="navbar-nav" >
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/login">Login</a>
+                        </li>
+                    </ul>
+                <?php } ?>
                 </nav>
-                <?php
-            } ?>
+
         </div>
     </div>
 </nav>
 <div class="container">
     <?php
-
     $message = Application::$app->session->getFlashMessage('success');
     if (Application::$app->session->getFlashMessage('success')) {
         $alert = new \app\core\form\Alert(['success', $message]);
         echo $alert;
     }
+
     ?>
     {{content}}
 </div>

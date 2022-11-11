@@ -15,7 +15,13 @@ class PalindromeModel extends Model
     public function rules(): array
     {
         return [
-           'palindrome' => [self::RULE_REQUIRED, self::RULE_PALINDROME]
+            'palindrome' => [self::RULE_REQUIRED, self::RULE_PALINDROME]
+        ];
+    }
+    public function palindromeRules(): array
+    {
+        return [
+            'palindrome' => [self::RULE_REQUIRED, self::RULE_PALINDROME]
         ];
     }
 

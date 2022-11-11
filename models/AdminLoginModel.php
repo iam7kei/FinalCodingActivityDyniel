@@ -12,4 +12,11 @@ class AdminLoginModel extends LoginModel
             'password' => [self::RULE_REQUIRED]
         ];
     }
+    public function loginRules(): array
+    {
+        return [
+            'username' => [self::RULE_REQUIRED],
+            'password' => [self::RULE_REQUIRED]
+        ];
+    }
 }
