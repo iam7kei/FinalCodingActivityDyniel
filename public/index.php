@@ -60,7 +60,7 @@ if ($app->request->isAdmin() && !$app->isGuest()) {
 
     $app->router->get('/admin/users', [UsersController::class, 'users']);
     $app->router->get('/admin/users/edit/' . $lastSlug, [UsersController::class, 'userEdit']);
-    $app->router->post('/admin/users/edit/' . $lastSlug, [AdminController::class, 'userEdit']);
+    $app->router->post('/admin/users/edit/' . $lastSlug, [UsersController::class, 'userEdit']);
     $app->router->get('/admin/users/add', [UsersController::class, 'userAdd']);
     $app->router->post('/admin/users/add', [UsersController::class, 'userAdd']);
     $app->router->post('/admin/users/delete/' . $lastSlug, [UsersController::class, 'delete']);

@@ -54,6 +54,7 @@ abstract class DbModel extends Model
         foreach ($where as $key => $value) {
             $statement->bindValue(":$key", $value);
         }
+
         $statement->execute();
         return $statement->fetchObject(static::class);
     }

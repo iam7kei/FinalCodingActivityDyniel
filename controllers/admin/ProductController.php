@@ -102,7 +102,10 @@ class ProductController extends Controller
     public function addToWishlist(Request $request, Response $response)
     {
         $wishlistModel = new WishlistModel();
-        $productID = $request->getLastSlug();
+        $productID = (array) ProductModel::findRecord([
+                'url_key' => $request->getLastSlug()
+        ]);
+        $productID = $productID[ProductModel::getPrimarYKey()];
         $customerID = Session::get(CustomerModel::getPrimaryKey());
         if ($request->isPost()) {
             $wishlistModel->setWishlistData($productID);

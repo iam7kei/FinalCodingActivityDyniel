@@ -27,9 +27,14 @@ class CommentController extends Controller
                     'success',
                     'Successfully added comment.'
                 );
+
                 Application::$app->response->redirect('/products/' . $productId);
             }
 
+            Application::$app->session->setFlashMessage(
+                'error',
+                'Please check the fields of your comment.'
+            );
             Application::$app->response->redirect('/products/' . $productId);
         }
     }

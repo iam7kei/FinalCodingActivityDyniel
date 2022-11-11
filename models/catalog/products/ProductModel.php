@@ -43,6 +43,14 @@ class ProductModel extends DbModel
         return [];
     }
 
+    public function loadData($data)
+    {
+        parent::loadData($data);
+
+        $this->url_key = preg_replace('/ /i', '-', trim($this->url_key));
+        $this->sku = preg_replace('/ /i', '-', trim($this->sku));
+    }
+
     public function loadOldData(array $oldData)
     {
         $this->oldData = [
@@ -90,5 +98,9 @@ class ProductModel extends DbModel
             ]],
             'price' => [self::RULE_REQUIRED,self::RULE_PRICE]
         ];
+    }
+
+    public function sanitize()
+    {
     }
 }

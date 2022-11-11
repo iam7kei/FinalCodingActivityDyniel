@@ -66,10 +66,10 @@ class WishlistModel extends DbModel
 
         foreach ($wishlist as $row => $data) {
             $productID = $data['product_id'];
-            $wishlistProductData = [];
             $productData = (array) ProductModel::findRecord([
                 ProductModel::getPrimarykey() => $productID
             ]);
+
             $productData['price'] = '&#36;' . $productData['price'];
             $content .= Card::renderCard(self::wishlistProductKeys(), $productData);
         }

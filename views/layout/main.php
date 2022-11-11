@@ -50,7 +50,6 @@
                 <?php
             } else {
                 ?>
-
                         <span class="navbar-text">
                             Welcome, <?php echo Application::$app->user->getName(); ?>!
                         </span>
